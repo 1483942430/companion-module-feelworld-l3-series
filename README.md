@@ -54,6 +54,8 @@ Companion 是一款强大的软件，允许通过流媒体面板（如 Elgato St
 - 丰富的按钮状态反馈（Feedback）与瞬时动作闪烁高亮
 - 提供 Companion 变量（当前 PGM/PVW 编号）
 
+![Companion 中的模块预设按钮](docs/presets.png)
+
 ---
 
 ## 项目结构
@@ -70,6 +72,8 @@ companion-module-feelworld-l3-series/
 ├── companion/
 │   ├── manifest.json    # 模块元数据（ID、名称、版本、配置字段等）
 │   └── HELP.md          # Companion UI 内显示的帮助文档
+├── docs/
+│   └── presets.png      # 预设面板截图（README 展示用）
 │   (protocol_new.md / protocol.md 为设备协议内部文档，未随公开仓库分发)
 ├── package.json         # Node.js 项目配置
 ├── tsconfig.json        # TypeScript 编译配置
@@ -493,6 +497,8 @@ Bitfocus Companion is a software platform that lets you control broadcast/produc
 - Rich button state feedbacks and instant-action flash highlighting
 - Companion variables for current PGM/PVW source numbers
 
+![Module preset buttons in Companion](docs/presets.png)
+
 ---
 
 ## Project Structure
@@ -509,6 +515,8 @@ companion-module-feelworld-l3-series/
 ├── companion/
 │   ├── manifest.json    # Module metadata (ID, name, version, config fields)
 │   └── HELP.md          # Help text shown inside Companion UI
+├── docs/
+│   └── presets.png      # Preset panel screenshot (shown in README)
 │   (protocol_new.md / protocol.md are internal protocol documents, not included in this public repository)
 ├── package.json         # Node.js project configuration
 ├── tsconfig.json        # TypeScript compiler configuration
