@@ -4,7 +4,7 @@
 	"id": "feelworld-l3-series",
 	"name": "Feelworld L3 Series",
 	"shortname": "feelworld-l3-series",
-	"description": "Control Feelworld L3 series video switcher via UDP",
+	"description": "Control Feelworld L3 series video switcher / live streaming mixer via UDP: PGM/PVW switching, streaming, recording, PIP, chroma key, audio, PTZ",
 	"version": "1.1.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/1483942430/companion-module-feelworld-l3-series.git",
@@ -24,5 +24,5 @@
 	"legacyIds": [],
 	"manufacturer": "Feelworld",
 	"products": ["L3", "L3 Pro"],
-	"keywords": ["feelworld", "l3", "switcher", "video"]
+	"keywords": ["feelworld", "l3", "l3 pro", "switcher", "video", "streaming", "mixer", "live production"]
 }

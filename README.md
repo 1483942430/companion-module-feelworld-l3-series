@@ -1,4 +1,4 @@
-# companion-module-feelworld-l3
+# companion-module-feelworld-l3-series
 
 > 本文档提供中英双语说明。Chinese and English documentation are both included below.
 
@@ -59,7 +59,7 @@ Companion 是一款强大的软件，允许通过流媒体面板（如 Elgato St
 ## 项目结构
 
 ```
-companion-module-feelworld-l3/
+companion-module-feelworld-l3-series/
 ├── src/
 │   ├── main.ts          # 模块主入口：初始化、UDP 连接、命令收发核心逻辑
 │   ├── actions.ts       # 所有 Action（动作）定义及命令映射
@@ -70,8 +70,7 @@ companion-module-feelworld-l3/
 ├── companion/
 │   ├── manifest.json    # 模块元数据（ID、名称、版本、配置字段等）
 │   └── HELP.md          # Companion UI 内显示的帮助文档
-├── protocol_new.md      # 设备 UDP 通信协议文档（新版，按 CMD 功能域划分，中文）
-├── protocol.md          # 旧版协议文档（仅作参考，模块已改用新版协议）
+│   (protocol_new.md / protocol.md 为设备协议内部文档，未随公开仓库分发)
 ├── package.json         # Node.js 项目配置
 ├── tsconfig.json        # TypeScript 编译配置
 └── README.md            # 本文件
@@ -83,7 +82,7 @@ companion-module-feelworld-l3/
 
 ### 前置要求
 
-- Node.js 18+
+- Node.js 26（与模块 manifest 的 runtime 要求一致）
 - yarn（推荐）或 npm
 - Bitfocus Companion（v3.0+，推荐最新稳定版）
 
@@ -132,7 +131,7 @@ yarn/npm dev
 
 ## 通信协议说明
 
-本模块使用自定义 UDP 二进制协议与 L3 通信，采用**新版协议**（按 CMD 功能域划分模块），详见 [protocol_new.md](./protocol_new.md)；旧版文档 [protocol.md](./protocol.md) 仅作参考。
+本模块使用自定义 UDP 二进制协议与 L3 通信，采用**新版协议**（按 CMD 功能域划分模块）。协议文档（`protocol_new.md` / `protocol.md`）为厂商内部资料，未随本公开仓库分发；协议要点见下文。
 
 > **协议要点：** 新版协议中 CMD 按功能域划分（如 0x10 输入、0x12 媒体、0x20 画中画、0x31 特效、0x53 按键、0x61 录制、0x70 PTZ 等）。协议文档中的命令示例帧可能存在与定义不符的历史遗留，**以各命令的帧定义表为准**。
 
@@ -275,7 +274,7 @@ yarn/npm dev
 
 - UDP 是无连接协议，`socket.bind()` 成功后即设置为 `InstanceStatus.Ok`，但这**不代表设备在线**。
 - 命令发送给离线设备会静默失败（只在日志中记录）。
-- 如需确认设备在线，可参考 `protocol_new.md` 中的 UDP 广播发现流程。
+- 如需确认设备在线，可参考厂商协议文档中的 UDP 广播发现流程（内部资料，未随仓库分发）。
 
 ### 4. 状态回报与 Feedback 更新
 
@@ -299,7 +298,7 @@ yarn/npm dev
 ### 7. 调试建议
 
 - 使用 `this.log('debug', ...)` 记录收发数据，Companion Log 面板可实时查看。
-- 可用 Wireshark 抓取 UDP 数据包，与 `protocol_new.md` 对照验证命令格式。
+- 可用 Wireshark 抓取 UDP 数据包，与厂商协议文档对照验证命令格式。
 - 开发模式下（`yarn dev`），保存文件后 Companion 自动重载模块，无需重启 Companion。
 
 ---
@@ -499,7 +498,7 @@ Bitfocus Companion is a software platform that lets you control broadcast/produc
 ## Project Structure
 
 ```
-companion-module-feelworld-l3/
+companion-module-feelworld-l3-series/
 ├── src/
 │   ├── main.ts          # Main entry: init, UDP socket, send/receive logic
 │   ├── actions.ts       # All Action definitions and command mappings
@@ -510,8 +509,7 @@ companion-module-feelworld-l3/
 ├── companion/
 │   ├── manifest.json    # Module metadata (ID, name, version, config fields)
 │   └── HELP.md          # Help text shown inside Companion UI
-├── protocol_new.md      # UDP protocol documentation (new version, organized by CMD domains, Chinese)
-├── protocol.md          # Legacy protocol documentation (reference only; the module now uses the new protocol)
+│   (protocol_new.md / protocol.md are internal protocol documents, not included in this public repository)
 ├── package.json         # Node.js project configuration
 ├── tsconfig.json        # TypeScript compiler configuration
 └── README.md            # This file
@@ -523,7 +521,7 @@ companion-module-feelworld-l3/
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 26 (matching the module manifest runtime requirement)
 - yarn (recommended) or npm
 - Bitfocus Companion (v3.0+, latest stable recommended)
 
@@ -572,7 +570,7 @@ Configure the following in Companion's Connection settings:
 
 ## Communication Protocol
 
-The module uses a custom UDP binary protocol — the **new version** organized by CMD functional domains. Full details in [protocol_new.md](./protocol_new.md); the legacy [protocol.md](./protocol.md) is kept for reference only.
+The module uses a custom UDP binary protocol — the **new version** organized by CMD functional domains. The protocol documents (`protocol_new.md` / `protocol.md`) are vendor-internal materials and are not distributed with this public repository; see the protocol summary below.
 
 > **Note:** In the new protocol, CMDs are grouped by functional domain (e.g., 0x10 input, 0x12 media, 0x20 PIP, 0x31 effects, 0x53 keys, 0x61 recording, 0x70 PTZ). Example frames in the protocol document may not match their definitions due to historical leftovers — **always follow the frame definition tables**.
 
@@ -716,7 +714,7 @@ Format: standard header + UTF-8 JSON string + data checksum byte.
 
 - `InstanceStatus.Ok` is set when `socket.bind()` succeeds — this means the local port is ready, **not** that the device is reachable.
 - Commands sent to an offline device fail silently (only logged).
-- For device discovery, see the UDP broadcast flow in `protocol_new.md`.
+- For device discovery, see the UDP broadcast flow in the vendor protocol document (internal material, not included in this repository).
 
 ### 4. State Feedback & Variable Updates
 
@@ -740,7 +738,7 @@ Format: standard header + UTF-8 JSON string + data checksum byte.
 ### 7. Debugging Tips
 
 - Use `this.log('debug', ...)` to log sent/received data — visible in Companion's Log panel in real time.
-- Use Wireshark to capture UDP packets and validate against `protocol_new.md`.
+- Use Wireshark to capture UDP packets and validate against the vendor protocol document.
 - In dev mode (`yarn dev`), file saves trigger auto-recompile and Companion auto-reloads the module.
 
 ---
@@ -914,8 +912,6 @@ actions['pip_set_scale_dynamic'] = {
 - [Module Development Guide](https://companion.free/for-developers/module-development/)
 - [companion-module-base API Docs](https://bitfocus.github.io/companion-module-base/)
 - [TypeScript Module Template](https://github.com/bitfocus/companion-module-template-ts)
-- [Device Protocol Documentation (new version)](./protocol_new.md)
-- [Device Protocol Documentation (legacy)](./protocol.md)
 
 ## License
 

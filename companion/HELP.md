@@ -2,6 +2,8 @@
 
 This module provides control for the Feelworld L3 / L3 Pro video switcher over UDP, using the new CMD-domain protocol.
 
+> **Firmware requirement**: switcher firmware **above V2.18** is required. Older firmware does not respond to the commands used by this module.
+
 ## Configuration
 
 - **Device IP Address**: Enter the IP address of your Feelworld L3 switcher (default: `192.168.1.100`)
