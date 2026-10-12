@@ -1,0 +1,8 @@
+{
+	// 让 IDE 的 TS 语言服务使用项目内的 TypeScript 6.0.3，
+	// 以识别 @companion-module/tools 推荐配置中的 lib: ["es2025"]
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"javascript.tsdk": "node_modules/typescript/lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"javascript.enablePromptUseWorkspaceTsdk": true
+}
