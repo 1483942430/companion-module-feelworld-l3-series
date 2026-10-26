@@ -24,10 +24,10 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/1483942430/companion-module-feelworld-l3-series.git"
+		"url": "https://github.com/bitfocus/companion-module-feelworld-l3-series.git"
 	},
 	"bugs": {
-		"url": "https://github.com/1483942430/companion-module-feelworld-l3-series/issues"
+		"url": "https://github.com/bitfocus/companion-module-feelworld-l3-series/issues"
 	},
 	"engines": {
 		"node": "^26"

@@ -7,8 +7,8 @@
 	"description": "Control Feelworld L3 series video switcher / live streaming mixer via UDP: PGM/PVW switching, streaming, recording, PIP, chroma key, audio, PTZ",
 	"version": "1.1.0",
 	"license": "MIT",
-	"repository": "git+https://github.com/1483942430/companion-module-feelworld-l3-series.git",
-	"bugs": "https://github.com/1483942430/companion-module-feelworld-l3-series/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-feelworld-l3-series.git",
+	"bugs": "https://github.com/bitfocus/companion-module-feelworld-l3-series/issues",
 	"maintainers": [
 		{
 			"name": "1483942430",
