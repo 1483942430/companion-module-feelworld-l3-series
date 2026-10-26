@@ -9,3 +9,4 @@ pkg/
 !.yarn/sdks
 !.yarn/versions
 protocol_new.md
+testWork/
