@@ -198,10 +198,10 @@ function defaultStyle(actionId: string): PresetStyle {
 }
 
 /**
- * 统一配色（产品规范）：
- * 默认：背景 #151B24，文字 #98A3B4
- * 高亮（除 PGM1-5）：背景 #1B493A，文字 #B6F5D3
- * PGM1-5 高亮：背景 #28181C，文字 #FFC0BB
+ * Unified color scheme (product spec):
+ * Default: background #151B24, text #98A3B4
+ * Highlight (except PGM1-5): background #1B493A, text #B6F5D3
+ * PGM1-5 highlight: background #28181C, text #FFC0BB
  */
 const DEFAULT_BG = 0x151b24
 const DEFAULT_COLOR = 0x98a3b4
@@ -213,8 +213,8 @@ const PGM_ACTIVE_BG = 0xb71f16
 const PGM_ACTIVE_COLOR = 0xffc0bb
 
 /**
- * 预设按钮自动携带的状态高亮 Feedback（Action ID → Feedback 定义 + 选项 + 激活态样式）。
- * style 为激活时的覆盖样式（必须显式提供，否则预览/激活渲染会缺样式）。
+ * State highlight feedbacks automatically attached to preset buttons (action id → feedback definition + options + active style).
+ * style is the active-state override style (must be provided explicitly, otherwise preview/active rendering lacks styling).
  */
 const FEEDBACK_BY_ACTION: Record<
 	string,
@@ -285,7 +285,7 @@ const FEEDBACK_BY_ACTION: Record<
 	},
 }
 
-// 瞬时动作预设自动携带闪烁高亮
+// Momentary action presets automatically carry the flash highlight
 for (const flashId of FLASH_ACTIONS) {
 	FEEDBACK_BY_ACTION[flashId] = {
 		feedbackId: 'flash_active',
@@ -294,7 +294,7 @@ for (const flashId of FLASH_ACTIONS) {
 	}
 }
 
-// 需要携带多个 Feedback 的预设（覆盖 FEEDBACK_BY_ACTION 中的单条定义）
+// Presets carrying multiple feedbacks (overrides the single definition in FEEDBACK_BY_ACTION)
 const EXTRA_FEEDBACKS: Record<
 	string,
 	Array<{ feedbackId: string; options?: Record<string, any>; style: Record<string, any> }>
@@ -350,7 +350,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 			? [
 					{
 						feedbackId: `${source[1]}_source`,
-						// 按钮 N 对应设备通道 N-1（0 起始编号）
+						// Button N maps to device channel N-1 (0-based)
 						options: { source: String(Number(source[2]) - 1) },
 						style:
 							source[1] === 'pgm'
@@ -383,7 +383,7 @@ export function UpdatePresets(self: ModuleInstance): void {
 		}
 	}
 
-	// 新 API：预设按分类组织为 sections（每组一个 simple group）
+	// New API: presets are organized into sections by category (one simple group per category)
 	const categoryOrder: string[] = []
 	const presetsByCategory: Record<string, string[]> = {}
 	for (const action of ACTION_SPECS) {

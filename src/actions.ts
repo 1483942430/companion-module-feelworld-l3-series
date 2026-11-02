@@ -98,8 +98,8 @@ const aiVoiceAction = (id: string, name: string, description: string, functionCo
 })
 
 /**
- * 瞬时动作清单（执行后触发闪烁高亮，无持久状态）。
- * 有状态高亮的动作（PGM/PVW 源、各开关、场景、图层、转场类型、FTB、抠绿/抠蓝）不在此列。
+ * Momentary actions list (these trigger a brief flash highlight after running, no persistent state).
+ * Stateful highlight actions (PGM/PVW source, toggles, scenes, layers, transition type, FTB, green/blue key) are not listed here.
  */
 export const FLASH_ACTIONS = new Set<string>([
 	'menu',
@@ -152,13 +152,13 @@ export const ACTION_SPECS: ActionSpec[] = [
 	keyAction('pgm_source_4', 'PGM Source 4', 'Set Program to Input 4', KEY_CODES.KEY_PGM_SOURCE_4),
 	keyAction('pgm_source_5', 'PGM Source 5', 'Set Program to Input 5', KEY_CODES.KEY_PGM_SOURCE_5),
 
-	// 新协议 25.5：JSON 命令 0xB0 0x60 0x04，index 0-3 对应 STREAM1-4，ispush 控制开/关；状态由 0xB1 0x58 校准
+	// Protocol 25.5: JSON command 0xB0 0x60 0x04, index 0-3 = STREAM1-4, isPush turns the stream on/off; state is re-synced via 0xB1 0x58
 	customAction('stream_toggle_1', 'Stream 1 Toggle', 'Toggle stream 1 on/off', (instance) => instance.toggleStream(0)),
 	customAction('stream_toggle_2', 'Stream 2 Toggle', 'Toggle stream 2 on/off', (instance) => instance.toggleStream(1)),
 	customAction('stream_toggle_3', 'Stream 3 Toggle', 'Toggle stream 3 on/off', (instance) => instance.toggleStream(2)),
 	customAction('stream_toggle_4', 'Stream 4 Toggle', 'Toggle stream 4 on/off', (instance) => instance.toggleStream(3)),
 
-	// 新协议 5.1-5.3：媒体控制 CMD=0x12，DAT2：0x00 停止 / 0x01 播放 / 0x02 暂停；0x02 下一个 / 0x04 上一个
+	// Protocol 5.1-5.3: media control CMD=0x12, DAT2: 0x00 stop / 0x01 play / 0x02 pause; 0x02 next / 0x04 previous
 	commandAction('media_play', 'Media Play', 'Play current media file', 0x12, 0x00, 0x01),
 	commandAction('media_pause', 'Media Pause', 'Pause current media file', 0x12, 0x00, 0x02),
 	commandAction('media_stop', 'Media Stop', 'Stop current media file', 0x12, 0x00, 0x00),
@@ -170,20 +170,20 @@ export const ACTION_SPECS: ActionSpec[] = [
 	keyAction('cut', 'Cut', 'Cut transition from PVW to PGM', KEY_CODES.KEY_PAD_CUT),
 	keyAction('auto', 'Auto', 'Auto transition from PVW to PGM', KEY_CODES.KEY_PAD_AUTO),
 	keyAction('ftb', 'FTB', 'Fade to Black', KEY_CODES.KEY_PAD_FTB),
-	// 转场类型（产品功能6，方案A：面板按键；高亮由 0x31 0x01 读取的当前特效枚举驱动，0=MIX 1=DIP 3=WIPE）
+	// Transition type (product feature 6, option A: panel keys; highlight driven by the effect enum read via 0x31 0x01, 0=MIX 1=DIP 3=WIPE)
 	keyAction('transition_mix', 'Transition MIX', 'Set transition type to MIX', KEY_CODES.KEY_MIX),
 	keyAction('transition_dip', 'Transition DIP', 'Set transition type to DIP', KEY_CODES.KEY_DIP),
 	keyAction('transition_wipe', 'Transition WIPE', 'Set transition type to WIPE', KEY_CODES.KEY_WIRE),
-	// PIP 开关 toggle（新协议 6.5：0x20 0x04，状态由 6.6 读取/设备上报刷新）
+	// PIP on/off toggle (protocol 6.5: 0x20 0x04, state refreshed via the 6.6 read / device reports)
 	customAction('pip_toggle', 'PIP Toggle', 'Toggle picture in picture on/off', (instance) => instance.togglePip()),
-	// 图层 AB 选择（新协议 6.8：0x20 0x08，状态由 6.9 读取/设备上报刷新）
+	// Layer A/B selection (protocol 6.8: 0x20 0x08, state refreshed via the 6.9 read / device reports)
 	customAction('layer_a', 'Layer A', 'Select Layer A', (instance) => instance.setLayer(1)),
 	customAction('layer_b', 'Layer B', 'Select Layer B', (instance) => instance.setLayer(0)),
 	keyAction('zoom_tele', 'Zoom Tele', 'Press ZOOM_TELE', KEY_CODES.KEY_ZOOM_TELE),
 	keyAction('zoom_wide', 'Zoom Wide', 'Press ZOOM_WIDE', KEY_CODES.KEY_ZOOM_WIDE),
 	// aiVoiceAction('lock', 'Lock', 'Lock the panel/screen', 0x3e),
 
-	// 新协议 28.7/28.5/28.9：PTZ CMD=0x70（复位 DAT1=0x09；聚焦模式 DAT1=0x06；位置 DAT1=0x0B）
+	// Protocol 28.7/28.5/28.9: PTZ CMD=0x70 (reset DAT1=0x09; focus mode DAT1=0x06; position DAT1=0x0B)
 	commandAction('ptz_reset', 'PTZ Reset', 'Reset PTZ position', 0x70, 0x09, 0x00),
 	commandAction('ptz_focus_auto', 'PTZ Auto Focus', 'Set PTZ focus mode to auto', 0x70, 0x06, 0x01, 0x01),
 	commandAction('ptz_focus_manual', 'PTZ Manual Focus', 'Set PTZ focus mode to manual', 0x70, 0x06, 0x01, 0x00),
@@ -193,7 +193,7 @@ export const ACTION_SPECS: ActionSpec[] = [
 	commandAction('ptz_right', 'PTZ Right', 'Move PTZ right', 0x70, 0x0b, 0x08),
 	commandAction('ptz_stop', 'PTZ Stop', 'Stop PTZ movement', 0x70, 0x0b, 0x00),
 
-	// 新协议 6.10/6.7：画中画比例 CMD=0x20 DAT1=0x0A；画中画模式 CMD=0x20 DAT1=0x06
+	// Protocol 6.10/6.7: PIP aspect CMD=0x20 DAT1=0x0A; PIP mode CMD=0x20 DAT1=0x06
 	commandAction('pip_aspect_9_16', 'PIP 9:16', 'Set PIP aspect to 9:16', 0x20, 0x0a, 0x01),
 	commandAction('pip_aspect_full', 'PIP Full', 'Set PIP aspect to Full', 0x20, 0x0a, 0x00),
 	commandAction('pip_template_1', 'PIP Template 1', 'Set PIP template 1', 0x20, 0x06, 0x01),
@@ -213,7 +213,7 @@ export const ACTION_SPECS: ActionSpec[] = [
 	aiVoiceAction('pip_size_x_add', 'PIP Width +100', 'Increase PIP width by one step', 0x6d),
 	aiVoiceAction('pip_size_x_sub', 'PIP Width -100', 'Decrease PIP width by one step', 0x6e),
 
-	// 新协议 13.1：特效模式 CMD=0x31 DAT1=0x00，DAT2=0x00-0x0F
+	// Protocol 13.1: effect mode CMD=0x31 DAT1=0x00, DAT2=0x00-0x0F
 	commandAction('effect_mode_1', 'Effect Mode 1', 'Set effect mode 1', 0x31, 0x00, 0x00),
 	commandAction('effect_mode_2', 'Effect Mode 2', 'Set effect mode 2', 0x31, 0x00, 0x01),
 	commandAction('effect_mode_3', 'Effect Mode 3', 'Set effect mode 3', 0x31, 0x00, 0x02),
@@ -231,24 +231,24 @@ export const ACTION_SPECS: ActionSpec[] = [
 	commandAction('effect_mode_15', 'Effect Mode 15', 'Set effect mode 15', 0x31, 0x00, 0x0e),
 	commandAction('effect_mode_16', 'Effect Mode 16', 'Set effect mode 16', 0x31, 0x00, 0x0f),
 
-	// 新协议 26.2：录制 toggle（CMD=0xB0 DAT1=0x61 DAT2=0x01，状态由 0xB1 0x58 recordInfo 校准）
+	// Protocol 26.2: recording toggle (CMD=0xB0 DAT1=0x61 DAT2=0x01, state re-synced via 0xB1 0x58 recordInfo)
 	customAction('record_toggle', 'Record Toggle', 'Toggle recording on/off', (instance) => instance.toggleRecord()),
 
-	// 新协议 9.3/9.4：LOGO 开关（实测不区分 Preview/Program，统一 DAT2=0x00；toggle 后回读校准）
+	// Protocol 9.3/9.4: LOGO toggle (tested: Preview/Program make no difference, always DAT2=0x00; read back after toggle to re-sync)
 	customAction('logo_toggle', 'LOGO Toggle', 'Toggle logo overlay on/off', (instance) => instance.toggleLogo()),
-	// 新协议 8.2/8.3：背景选择 CMD=0x22 DAT1=0x02；背景查询 CMD=0x22 DAT1=0x03
+	// Protocol 8.2/8.3: background select CMD=0x22 DAT1=0x02; background query CMD=0x22 DAT1=0x03
 	customAction('background_toggle', 'Background Toggle', 'Cycle background image 1-6', async (instance) => {
 		const current = await instance.queryBackground()
 		const next = (current % 6) + 1
 		await instance.sendCommand(0x22, 0x02, next, 0x00, 0x00)
 	}),
-	// 新协议 8.1：背景开关 toggle（CMD=0x22 DAT1=0x00，状态由 8.3 读取/设备上报刷新）
+	// Protocol 8.1: background on/off toggle (CMD=0x22 DAT1=0x00, state refreshed via the 8.3 read / device reports)
 	customAction('background_power_toggle', 'Background On/Off', 'Toggle background layer on/off', (instance) =>
 		instance.toggleBackgroundPower(),
 	),
-	// 新协议 10.1：抠像开关 toggle（状态由 10.3 读取/设备上报刷新）
+	// Protocol 10.1: key on/off toggle (state refreshed via the 10.3 read / device reports)
 	customAction('key_toggle', 'Key Toggle', 'Toggle keying on/off', (instance) => instance.toggleKey()),
-	// 抠绿 / 抠蓝 实现为开启抠图（10.1）、设置色度模式（10.2：0x24 0x02 0x01），并发送协议表里的 green/blue 色度参数（10.4：0xB0 0x24 0x04）。
+	// Green/blue key implemented as: enable keying (10.1), set chroma mode (10.2: 0x24 0x02 0x01), and send the green/blue chroma params from the protocol table (10.4: 0xB0 0x24 0x04).
 	customAction('key_green', 'Key Green', 'Enable chroma key and use green key parameters', async (instance) => {
 		instance.setChromaHint('green')
 		await instance.sendCommand(0x24, 0x00, 0x01, 0x00, 0x00)
@@ -261,9 +261,9 @@ export const ACTION_SPECS: ActionSpec[] = [
 		await instance.sendCommand(0x24, 0x02, 0x01, 0x00, 0x00)
 		await instance.sendJsonCommand(0xb0, 0x24, 0x04, { min: 1600, max: 1984, sat: 200 })
 	}),
-	// ---- 产品新增功能（第一期）----
+	// ---- Phase-1 product features ----
 
-	// 新协议 15.1/15.2：输出静音 toggle（0x41 0x00，DAT2=0 监听(PVW)/1 PGM，状态由 15.2 读取/设备上报刷新）
+	// Protocol 15.1/15.2: output mute toggle (0x41 0x00, DAT2=0 monitor(PVW)/1 PGM, state refreshed via the 15.2 read / device reports)
 	customAction('pvw_mute_toggle', 'PVW Mute Toggle', 'Toggle monitor (PVW) output mute on/off', (instance) =>
 		instance.toggleMute(0),
 	),
@@ -271,14 +271,14 @@ export const ACTION_SPECS: ActionSpec[] = [
 		instance.toggleMute(1),
 	),
 
-	// 新协议 14.1：AFV 1-5 路分别 toggle（HDMI1-4 + MEDIA，DAT3=通道 0-4，状态由读取/设备上报刷新）
+	// Protocol 14.1: AFV channels 1-5 toggled individually (HDMI1-4 + MEDIA, DAT3=channel 0-4, state refreshed via reads / device reports)
 	customAction('afv_toggle_1', 'AFV 1 Toggle', 'Toggle AFV for HDMI1', (instance) => instance.toggleAfv(0)),
 	customAction('afv_toggle_2', 'AFV 2 Toggle', 'Toggle AFV for HDMI2', (instance) => instance.toggleAfv(1)),
 	customAction('afv_toggle_3', 'AFV 3 Toggle', 'Toggle AFV for HDMI3', (instance) => instance.toggleAfv(2)),
 	customAction('afv_toggle_4', 'AFV 4 Toggle', 'Toggle AFV for HDMI4', (instance) => instance.toggleAfv(3)),
 	customAction('afv_toggle_5', 'AFV 5 Toggle', 'Toggle AFV for MEDIA', (instance) => instance.toggleAfv(4)),
 
-	// 新协议 15.3/15.4：输出音量 ±1（读取 0x41 0x03 取当前值后步进写入 0x41 0x02；0=监听(PVW)/1=PGM）
+	// Protocol 15.3/15.4: output volume +/-1 (read the current value via 0x41 0x03 then step-write via 0x41 0x02; 0=monitor(PVW)/1=PGM)
 	customAction('pvw_volume_up', 'PVW Vol +1', 'Increase monitor (PVW) volume by 1', (instance) =>
 		instance.stepVolume(0, 1),
 	),
@@ -290,7 +290,7 @@ export const ACTION_SPECS: ActionSpec[] = [
 		instance.stepVolume(1, -1),
 	),
 
-	// 新协议 12.1/12.4：预设模式（场景）调用 1-8；当前场景已激活时再次点击则退出（0x30 0x04）
+	// Protocol 12.1/12.4: preset (scene) recall 1-8; pressing the active scene again exits it (0x30 0x04)
 	customAction('scene_recall_1', 'Scene 1', 'Recall scene preset 1 (tap again to exit)', (instance) =>
 		instance.toggleScene(1),
 	),
@@ -326,7 +326,7 @@ export function UpdateActions(self: ModuleInstance): void {
 			description: action.description,
 			options: NO_OPTIONS,
 			callback: async () => {
-				// 瞬时动作按下瞬间即闪烁高亮（不等执行完成：如 background_toggle 需先查询背景索引，最长 1s）
+				// Momentary actions flash immediately on press (without waiting for completion: e.g. background_toggle must query the background index first, up to 1s)
 				if (FLASH_ACTIONS.has(action.id)) {
 					self.flashAction(action.id)
 				}

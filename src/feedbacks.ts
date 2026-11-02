@@ -12,7 +12,7 @@ export type FeedbacksSchema = Record<string, { type: 'boolean'; options: Compani
 
 const NO_OPTIONS: SomeCompanionFeedbackInputField[] = []
 
-// 设备通道编号为 0 起始：HDMI1-4 = 0-3，MEDIA = 4（实测确认）
+// Device channels are 0-based: HDMI1-4 = 0-3, MEDIA = 4 (confirmed by testing)
 const SOURCE_OPTIONS: SomeCompanionFeedbackInputField[] = [
 	{
 		type: 'dropdown',
@@ -40,17 +40,17 @@ const SCENE_OPTIONS: SomeCompanionFeedbackInputField[] = [
 ]
 
 /**
- * 统一配色（产品规范）：
- * 默认：背景 #151B24，文字 #98A3B4
- * 高亮（除 PGM1-5）：背景 #1B493A，文字 #B6F5D3
- * PGM1-5 高亮：背景 #28181C，文字 #FFC0BB
+ * Unified color scheme (product spec):
+ * Default: background #151B24, text #98A3B4
+ * Highlight (except PGM1-5): background #1B493A, text #B6F5D3
+ * PGM1-5 highlight: background #28181C, text #FFC0BB
  */
 const ACTIVE_BG = 0x1b493a
 const ACTIVE_COLOR = 0xb6f5d3
-const PGM_ACTIVE_BG = 0x28181c
+const PGM_ACTIVE_BG = 0xb71f16
 const PGM_ACTIVE_COLOR = 0xffc0bb
 
-/** 生成简单的开关型高亮 Feedback（默认使用统一高亮配色） */
+/** Builds a simple boolean highlight feedback (uses the unified highlight colors by default) */
 const boolFeedback = (
 	_id: string,
 	name: string,
@@ -110,11 +110,12 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		},
 		options: NO_OPTIONS,
 		callback: () => {
-			return self.getCurrentPgm() === self.getCurrentPvw() && self.getCurrentPgm() !== 0
+			// currentPgm/currentPvw start at -1 (unknown); only alert once both are known (>= 0)
+			return self.getCurrentPgm() === self.getCurrentPvw() && self.getCurrentPgm() >= 0
 		},
 	}
 
-	// ---- 第一期：开关型功能状态高亮 ----
+	// ---- Phase 1: boolean feature-state highlights ----
 
 	feedbacks['pip_active'] = boolFeedback(
 		'pip_active',
@@ -130,7 +131,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		() => self.getKeyMode() !== 0,
 	)
 
-	// 绿幕/蓝幕互斥高亮（keyInfo.chromaInfo.color 按 RGB 判定，无法区分时回退最后下发值）
+	// Green/blue screen mutually exclusive highlight (keyInfo.chromaInfo.color judged by RGB; falls back to the last sent value when indistinguishable)
 	feedbacks['key_green_active'] = boolFeedback(
 		'key_green_active',
 		'Chroma Key Green Active',
@@ -169,7 +170,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		() => self.getPgmMute(),
 	)
 
-	// AFV 1-5 路分别高亮（HDMI1-4 + MEDIA）
+	// AFV channels 1-5 highlighted individually (HDMI1-4 + MEDIA)
 	for (let ch = 0; ch < 5; ch++) {
 		const channel = ch
 		feedbacks[`afv_${channel + 1}_active`] = boolFeedback(
@@ -180,7 +181,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		)
 	}
 
-	// 当前场景单选高亮
+	// Current scene single-select highlight
 	feedbacks['scene_active'] = {
 		type: 'boolean',
 		name: 'Scene Active',
@@ -193,7 +194,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		},
 	}
 
-	// 图层 AB 单选高亮
+	// Layer A/B single-select highlight
 	feedbacks['layer_a_active'] = boolFeedback(
 		'layer_a_active',
 		'Layer A Selected',
@@ -207,7 +208,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		() => self.getLayerSel() === 0,
 	)
 
-	// 推流 1-4 路分别高亮（状态由 0xB1 0x58 streamInfo 校准）
+	// Streams 1-4 highlighted individually (state re-synced via 0xB1 0x58 streamInfo)
 	for (let i = 0; i < 4; i++) {
 		const index = i
 		feedbacks[`stream_${index + 1}_active`] = boolFeedback(
@@ -218,7 +219,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		)
 	}
 
-	// 录制高亮（状态由 0xB1 0x58 recordInfo 校准）
+	// Recording highlight (state re-synced via 0xB1 0x58 recordInfo)
 	feedbacks['record_active'] = boolFeedback(
 		'record_active',
 		'Recording Active',
@@ -226,7 +227,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		() => self.getRecordEnabled(),
 	)
 
-	// 无 U 盘警告（开始录制被拦截时短暂显示）
+	// No USB disk warning (briefly shown when starting a recording is blocked)
 	feedbacks['record_no_disk'] = boolFeedback(
 		'record_no_disk',
 		'Recording Warn: No Disk',
@@ -236,7 +237,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		0x000000,
 	)
 
-	// 推流地址为空警告（开启推流未获 b158 确认时短暂显示）
+	// Empty stream address warning (briefly shown when a stream start is not confirmed by b158)
 	feedbacks['stream_no_addr'] = {
 		type: 'boolean',
 		name: 'Stream Warn: Address Empty',
@@ -258,7 +259,7 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		},
 	}
 
-	// 瞬时动作闪烁高亮
+	// Momentary action flash highlight
 	const FLASH_CHOICES = [...FLASH_ACTIONS].map((id) => ({
 		id,
 		label: ACTION_SPECS.find((a) => a.id === id)?.name ?? id,
@@ -283,12 +284,12 @@ export function UpdateFeedbacks(self: ModuleInstance): void {
 		},
 	}
 
-	// FTB 黑场高亮（状态由 13.9 读取 / 0xB1 0x58 transInfo.ftbEnable 刷新）
+	// FTB highlight (state refreshed via the 13.9 read / 0xB1 0x58 transInfo.ftbEnable)
 	feedbacks['ftb_active'] = boolFeedback('ftb_active', 'FTB Active', 'Highlight when fade to black is active', () =>
 		self.getFtbEnabled(),
 	)
 
-	// 转场类型单选高亮（0=MIX，1=DIP，3=WIPE，由 13.2 读取/设备上报刷新）
+	// Transition type single-select highlight (0=MIX, 1=DIP, 3=WIPE, refreshed via the 13.2 read / device reports)
 	feedbacks['transition_mix_active'] = boolFeedback(
 		'transition_mix_active',
 		'Transition MIX Selected',

@@ -44,7 +44,7 @@ jobs:
         # --clobber lets the workflow be re-run against a release that already has
         # the asset attached.
         run: |
-          NAME="${GITHUB_REPOSITORY#*/companion-module-}-${TAG}"
+          NAME="${GITHUB_REPOSITORY#*/companion-module-}-${TAG#v}"
           ASSET="${NAME//[^a-zA-Z0-9.-]/-}.tgz"
           mv pkg.tgz "$ASSET"
           gh release upload "$TAG" "$ASSET" --clobber --repo "$GITHUB_REPOSITORY"
