@@ -131,7 +131,11 @@ export class FeelworldL3Instance extends InstanceBase<ModuleSchema> {
 			})
 
 			this.socket.on('message', (msg, rinfo) => {
-				if (!this.deviceReplied && rinfo.address === this.config.host) {
+				// Ignore packets that did not come from the configured device address
+				if (rinfo.address !== this.config.host) {
+					return
+				}
+				if (!this.deviceReplied) {
 					this.deviceReplied = true
 					this.clearConnectTimeout()
 					this.updateStatus(InstanceStatus.Ok)

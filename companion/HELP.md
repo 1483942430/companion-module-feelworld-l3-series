@@ -11,7 +11,7 @@ This module provides control for the Feelworld L3 / L3 Pro video switcher over U
 
 The Companion host and the switcher must be on the same LAN, and your firewall must allow UDP traffic on the configured port.
 
-> Note: UDP is connectionless — the connection shows "Ok" as soon as the local port is bound, which does not guarantee the device is reachable. On connect, the module sends a round of status queries; if the device is offline, commands fail silently.
+> Note: UDP is connectionless — the connection shows "Connecting" until the device answers the startup status queries (then "Ok"), and "Connection failure" if there is no reply within a few seconds.
 
 ## Actions
 
