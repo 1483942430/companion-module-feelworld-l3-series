@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-feelworld-l3-series",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "Companion module for Feelworld L3 Video Switcher",
 	"main": "dist/main.js",
 	"type": "module",
